@@ -12,16 +12,37 @@ class App extends Component {
     showPersons: true
   };
 
-  nameChangedHandler = (event) => {
-    // we change state in immutable fashion
-    // const persons_mod = this.state.persons.slice();
-    // es6
-    const persons_mod = [...this.state.persons];
-    const person_index = event.target.id.split('-')[1];
-    persons_mod[person_index].name = event.target.value;
+  // using flexible id in the input element
+
+  // nameChangedHandlerCustom = (event) => {
+  //   // we change state in immutable fashion
+  //   // const persons_mod = this.state.persons.slice();
+  //   // es6
+  //   const persons_mod = [...this.state.persons];
+  //   const person_index = event.target.id.split('-')[1];
+  //   persons_mod[person_index].name = event.target.value;
+  //
+  //   this.setState({
+  //     persons: persons_mod
+  //   });
+  // };
+
+  nameChangedHandler = (event, id) => {
+    const personIndex = this.state.persons.findIndex(p => {
+      return p.id === id;
+    });
+
+    // classic es way
+    // const person = Object.assign({}, this.state.persons[personIndex]);
+
+    const person = {...this.state.persons[personIndex]};
+    person.name = event.target.value;
+
+    const persons = [...this.state.persons];
+    persons[personIndex] = person;
 
     this.setState({
-      persons: persons_mod
+      persons: persons
     });
   };
 
@@ -67,7 +88,8 @@ class App extends Component {
                 index={index}
                 key={person.id}
                 click={this.deletePersonHandler.bind(this, index)}
-                changed={this.nameChangedHandler}>Permissions: user
+                // changed={this.nameChangedHandlerCustom}>Permissions: user
+                changed={(event) => this.nameChangedHandler(event, person.id)}>Permissions: user
               </Person>
             );
           })}

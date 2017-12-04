@@ -5,31 +5,32 @@ import Person from './Person/Person';
 class App extends Component {
   state = {
     persons: [
-      {name: 'gulci', age: 33},
-      {name: 'karolcia', age: 33},
-      {name: 'wiki', age: 4}
+      {id: 'qwer', name: 'gulci', age: 33},
+      {id: 'asdf', name: 'karolcia', age: 33},
+      {id: 'zxcv', name: 'wiki', age: 4}
     ],
-    showPersons: false
-  };
-
-  switchNameHandler = (newName) => {
-    // merging states
-    this.setState({
-      persons: [
-        {name: newName, age: 33},
-        {name: 'karolcia', age: 33},
-        {name: 'wiki', age: 4}
-      ]
-    });
+    showPersons: true
   };
 
   nameChangedHandler = (event) => {
+    // we change state in immutable fashion
+    // const persons_mod = this.state.persons.slice();
+    // es6
+    const persons_mod = [...this.state.persons];
+    const person_index = event.target.id.split('-')[1];
+    persons_mod[person_index].name = event.target.value;
+
     this.setState({
-      persons: [
-        {name: 'gulci', age: 33},
-        {name: 'karolcia', age: 33},
-        {name: event.target.value, age: 4}
-      ]
+      persons: persons_mod
+    });
+  };
+
+  deletePersonHandler = (index) => {
+    const persons_mod = [...this.state.persons];
+    // deleting one item
+    persons_mod.splice(index, 1);
+    this.setState({
+      persons: persons_mod
     });
   };
 
@@ -54,18 +55,22 @@ class App extends Component {
     if (this.state.showPersons) {
       persons = (
         <div>
-          <Person
-            // reference to the function
-            click={this.switchNameHandler.bind(this, 'sebko')}
-            name={this.state.persons[0].name}
-            age={this.state.persons[0].age}>Hobbies: coding</Person>
-          <Person
-            name={this.state.persons[1].name}
-            age={this.state.persons[1].age}/>
-          <Person
-            name={this.state.persons[2].name}
-            age={this.state.persons[2].age}
-            changed={this.nameChangedHandler}/>
+          {this.state.persons.map((person, index) => {
+            // event is a default argument; with one line in function we perform return
+            // function is executed when event occurs
+            // may be inefficient comparing to bind - too many DOM refreshes
+            // {() => this.switchNameHandler('sebek')}
+            return (
+              <Person
+                name={person.name}
+                age={person.age}
+                index={index}
+                key={person.id}
+                click={this.deletePersonHandler.bind(this, index)}
+                changed={this.nameChangedHandler}>Permissions: user
+              </Person>
+            );
+          })}
         </div>
       );
     }
@@ -74,14 +79,6 @@ class App extends Component {
       <div className="App">
         <h1>hello from react</h1>
         <h2>v. {React.version}</h2>
-        {/*event is an argument; with one line we return*/}
-        {/*function is executed when event occurs*/}
-        {/*may be inefficient comparing to bind - too many DOM refreshes*/}
-        <button
-          style={style}
-          onClick={() => this.switchNameHandler('sebek')}>Switch name
-        </button>
-        <br/>
         <button
           style={style}
           onClick={this.togglePersonsHandler}>Toggle Persons

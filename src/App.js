@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import Radium, {StyleRoot} from 'radium';
 import './App.css';
 import Person from './Person/Person';
 
@@ -63,12 +64,20 @@ class App extends Component {
 
   render() {
     const style = {
-      backgroundColor: 'white',
+      backgroundColor: 'green',
+      border: '1px solid green',
+      color: 'white',
       font: 'inherit',
-      border: '1px solid blue',
       padding: '8px',
       cursor: 'pointer',
-      marginTop: '10px'
+      marginTop: '10px',
+      ':hover': {
+        backgroundColor: 'lightgreen',
+        color: 'black'
+      },
+      ':focus': {
+        outline: 0
+      }
     };
 
     let persons = null;
@@ -95,22 +104,41 @@ class App extends Component {
           })}
         </div>
       );
+
+      style.backgroundColor = 'red';
+      style.border = '1px solid red';
+      style[':hover'] = {
+        backgroundColor: 'salmon',
+        color: 'black'
+      };
+    }
+
+    const classes = [];
+
+    if (this.state.persons.length <= 2) {
+      classes.push('red');
+    }
+    if (this.state.persons.length <= 1) {
+      classes.push('bold');
     }
 
     return (
-      <div className="App">
-        <h1>hello from react</h1>
-        <h2>v. {React.version}</h2>
-        <button
-          style={style}
-          onClick={this.togglePersonsHandler}>Toggle Persons
-        </button>
+      <StyleRoot>
+        <div className="App">
+          <h1>hello from react</h1>
+          <h2>v. {React.version}</h2>
+          <p className={classes.join(' ')}>Our people</p>
+          <button
+            style={style}
+            onClick={this.togglePersonsHandler}>Toggle Persons
+          </button>
 
-        {/*condition using ternary expression*/}
-        {/*{condition ? jsx_code : null}*/}
+          {/*condition using ternary expression*/}
+          {/*{condition ? jsx_code : null}*/}
 
-        {persons}
-      </div>
+          {persons}
+        </div>
+      </StyleRoot>
     );
 
     // equivalent code
@@ -119,4 +147,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default Radium(App);

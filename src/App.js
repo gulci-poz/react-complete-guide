@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import classes from './App.css';
 import Person from './Person/Person';
+import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
 
 class App extends Component {
   state = {
@@ -74,15 +75,16 @@ class App extends Component {
             // may be inefficient comparing to bind - too many DOM refreshes
             // {() => this.switchNameHandler('sebek')}
             return (
-              <Person
-                name={person.name}
-                age={person.age}
-                index={index}
-                key={person.id}
-                click={this.deletePersonHandler.bind(this, index)}
-                // changed={this.nameChangedHandlerCustom}>Permissions: user
-                changed={(event) => this.nameChangedHandler(event, person.id)}>Permissions: user
-              </Person>
+              <ErrorBoundary key={person.id}>
+                <Person
+                  name={person.name}
+                  age={person.age}
+                  index={index}
+                  click={this.deletePersonHandler.bind(this, index)}
+                  // changed={this.nameChangedHandlerCustom}>Permissions: user
+                  changed={(event) => this.nameChangedHandler(event, person.id)}>Permissions: user
+                </Person>
+              </ErrorBoundary>
             );
           })}
         </div>

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import classes from './App.css';
-import Person from '../components/Persons/Person/Person';
-import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
+import Persons from '../components/Persons/Persons';
+import Cockpit from '../components/Cockpit/Cockpit';
 
 class App extends Component {
   state = {
@@ -12,21 +12,6 @@ class App extends Component {
     ],
     showPersons: true
   };
-
-  // using flexible id in the input element
-
-  // nameChangedHandlerCustom = (event) => {
-  //   // we change state in immutable fashion
-  //   // const persons_mod = this.state.persons.slice();
-  //   // es6
-  //   const persons_mod = [...this.state.persons];
-  //   const person_index = event.target.id.split('-')[1];
-  //   persons_mod[person_index].name = event.target.value;
-  //
-  //   this.setState({
-  //     persons: persons_mod
-  //   });
-  // };
 
   nameChangedHandler = (event, id) => {
     const personIndex = this.state.persons.findIndex(p => {
@@ -64,64 +49,23 @@ class App extends Component {
 
   render() {
     let persons = null;
-    let btnClass = '';
 
     if (this.state.showPersons) {
-      persons = (
-        <div>
-          {this.state.persons.map((person, index) => {
-            // event is a default argument; with one line in function we perform return
-            // function is executed when event occurs
-            // may be inefficient comparing to bind - too many DOM refreshes
-            // {() => this.switchNameHandler('sebek')}
-            return (
-              <ErrorBoundary key={person.id}>
-                <Person
-                  name={person.name}
-                  age={person.age}
-                  index={index}
-                  click={this.deletePersonHandler.bind(this, index)}
-                  // changed={this.nameChangedHandlerCustom}>Permissions: user
-                  changed={(event) => this.nameChangedHandler(event, person.id)}>Permissions: user
-                </Person>
-              </ErrorBoundary>
-            );
-          })}
-        </div>
-      );
-
-      btnClass = classes.Red;
-    }
-
-    const assignedClasses = [];
-
-    if (this.state.persons.length <= 2) {
-      assignedClasses.push(classes.red);
-    }
-    if (this.state.persons.length <= 1) {
-      assignedClasses.push(classes.bold);
+      persons = <Persons
+        persons={this.state.persons}
+        clicked={this.deletePersonHandler}
+        changed={this.nameChangedHandler}/>;
     }
 
     return (
       <div className={classes.App}>
-        <h1>hello from react</h1>
-        <h2>v. {React.version}</h2>
-        <p className={assignedClasses.join(' ')}>Our people</p>
-        <button
-          className={btnClass}
-          onClick={this.togglePersonsHandler}>Toggle Persons
-        </button>
-
-        {/*condition using ternary expression*/}
-        {/*{condition ? jsx_code : null}*/}
-
+        <Cockpit
+          showPersons={this.state.showPersons}
+          persons={this.state.persons}
+          toggled={this.togglePersonsHandler}/>
         {persons}
       </div>
     );
-
-    // equivalent code
-    // jsx code will be compiled to such code
-    // return React.createElement('div', {className: 'App'}, React.createElement('h1', null, 'hello from react ' + React.version));
   }
 }
 
